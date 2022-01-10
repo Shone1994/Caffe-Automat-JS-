@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Coffee Machine - javaScript Homework</title>
+        <meta charset="UTF-8">
+        <meta name="author" content="">
+        <meta name="description" content="Javascript homework">
+        <meta name="keywords" content="html, css, javascript">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body onload="coffeeMachine.waterStatus(), coffeeMachine.coffeeStatus();coffeeMachine.milkStatus(), coffeeMachine.creditStatus();">
+        <div id="caffe-mashine">
+            <div id="caffe-screen" class="d-flex flex-column justify-between">
+                <p>Credit: <span id="credit">    </span>RSD</p>
+                <p id="message" class="text-center">DISPLAY MESSAGE</p>
+                <p id="status">Water: <span id="water-status">  </span> Coffee: <span id="coffee-status"> </span> Milk: <span id="milk-status"> </span></p>
+            </div>
+            <div>
+            </div>
+            <button id="add-credit" class="d-block" onclick="coffeeMachine.addCredit();">ADD Credit</button>
+            <div class="d-flex justify-between">
+                <button id="add-water" onclick="coffeeMachine.addWater();">ADD WATER</button>
+                <button id="add-coffee" onclick="coffeeMachine.addCoffee();">ADD COFFEE</button>
+                <button id="add-milk" onclick="coffeeMachine.addMilk()">ADD MILK</button>
+            </div>
+            <div class="d-flex justify-between">
+                <button id="short-espresso" onclick="coffeeMachine.makeShortEspresso();">Short Espresso</button>
+                <button id="long-espresso" onclick="coffeeMachine.makeLongEspresso();">Long Espresso</button>
+                <button id="capuchino" onclick="coffeeMachine.makeCappuccino();">Cappuccino</button>
+            </div>
+        </div>
+        <script>
+
+
+
+            // Create object coffeeMaschine below
+
+            let coffeeMachine = {
+                water: 400, //water - tipa number sa pocetnom vrednoscu 400 i predstavlja stanje popunjenosti posude sa vodom (max vrednost je 400)
+                coffee: 200, //coffee - tipa number sa pocetnom vrednoscu 200 i poredstavlja stanje popunjenosti posude sa kafom(max vrednost je 200)
+                milk: 100, //milk - tipa number sa pocetnom vrednoscu 100 i predstavlja  stanje popunjenosti posude sa mlekom(max vrednost je 100)
+                credit: 100, //credit - tipa number sa pocetnom vrednoscu 100 i predstavlja  stanje kredita u dinarima
+                waterStatus: function () {
+                    //funkcija uzima vrednost atributa water i ispisuje ga u elementu sa  id="water-status"
+                    document.getElementById('water-status').innerHTML = this.water;
+                },
+                addWater: function () {
+                    //funkcija vrsi punjenje vode
+                    //funkcija se poziva na dugme ADD WATER
+                    //kada se pozove pojavljuje se prompt gde treba da se unese kolicina vode
+                    //unos mora da bude validan(ceo broj) i ne sme biti negativan
+                    //Ako je sve u redu aparat se dopunjuje vodom tako sto se uzima trenutna vrednost vode u masini i na nju se dodaje nova kolicina. Ukupna vrednost ne moze biti veca od 400
+                    //poziva se metoda waterStatus() da se osvezi prikaz
+                    let waterQuantity = prompt('Koju kolicinu vode biste dodali?');
+                    if (waterQuantity === null) {
+                        return;
+                    }
+                    //    Unos mora da bude validan(ceo broj) i ne sme biti negativan
+                    if (isNaN(waterQuantity) || waterQuantity < 0 || waterQuantity % 1 !== 0) {
+                        alert('Unesite validan broj');
+                        waterQuantity = "";
+                        this.addWater();
+                    }
+                    if (Number(waterQuantity) + this.water > 400) {
+                        this.water = 400;
+                        document.getElementById('water-status').innerHTML = this.water;
+                    } else {
+                        this.water += Number(waterQuantity);
+                        document.getElementById('water-status').innerHTML = this.water;
+                    }
+                    this.waterStatus();
+                },
+                emptyWater: function (data) {
+                    //Funkciom se vrsi praznjenje vode.
+                    //Funkcija treba da  proveri da li je trenutna vrednost vode u aparatu veca od prosledjene.
+                    //Ukoliko nije treba da ispise poruku "Machine is out of water\n" u elementu sa id="message" .
+                    //ukoliko jeste treba da se atribut water umanji za prosledjienu vrednost
+                    //treba da se pozove metoda waterStatus() da se osvezi prikaz i treba da ispise poruku "Pouring water" u elementu sa id="message" .
+                    let waterForCoffee = data;
+                    if (this.water >= waterForCoffee){
+                        this.water -= waterForCoffee;
+                        this.waterStatus();
+                        document.getElementById('message').innerText = 'U toku je sipanje vode...!!';
+
+                    } else {
+                        document.getElementById('message').innerText = 'Aparat nema dovoljno vode!!';
+                    };
+                },
+                coffeeStatus: function () {
+                    //funkcija uzima vrednost atributa coffee i ispisuje ga u elementu sa  id="coffie-status"
+                    //funkcija se takodje poziva odmah na document load da bi se odmah ispisalo pocetno stanje
+                    document.getElementById('coffee-status').innerHTML = this.coffee;
+                },
+                addCoffee: function () {
+                    //funkcija vrsi punjenje kafe
+                    //funkcija se poziva na dugme ADD COFFEE
+                    //kada se pozove pojavljuje se prompt gde treba da se unese kolicina kafe
+                    //Unos mora da bude validan(ceo broj) i ne sme biti negativan
+                    //Ako je sve u redu aparat se dopunjuje kafom tako sto se uzima trenutna vrednost kafe u masini i na nju se dodaje nova kolicina. Ukupna vrednost ne moze biti veca od 200
+                    //poziva se metoda coffeeStatus() da se osvezi prikaz
+                    let coffeeQuantity = prompt('Koju kolicinu kafe biste dodali?');
+                    if (coffeeQuantity === null) {
+                        return;
+                    }
+                    if (isNaN(coffeeQuantity) || coffeeQuantity < 0 || coffeeQuantity % 1 !== 0) {
+                        alert('Unesite validan broj');
+                        coffeeQuantity = "";
+                        this.addCoffee()();
+                    }
+                    if (Number(coffeeQuantity) + this.coffee > 200) {
+                        this.coffee = 200;
+                        document.getElementById('coffee-status').innerHTML = this.coffee;
+                    } else {
+                        this.coffee += Number(coffeeQuantity);
+                        document.getElementById('coffee-status').innerHTML = this.coffee;
+                    }
+                    this.coffeeStatus()();
+                },
+                emptyCoffee: function (data) {
+                    //Funkciom se vrsi praznjenje kafe.
+                    //Funkcija treba da  proveri da li je trenutna vrednost kafe u aparatu veca od prosledjene.
+                    // Ukoliko nije treba da ispise poruku "Machine is out of coffee" u elementu sa id="message"
+                    //ukoliko jeste treba da se atribut coffee umanji za prosledjienu vrednost
+                    //treba da se pozove metoda coffeeStatus() da se osvezi prikaz i treba da ispise poruku "Pouring coffie" u elementu sa id="message"
+                    let coffeeForCoffee = data;
+                    if (this.coffee >= coffeeForCoffee) {
+                        this.coffee -= coffeeForCoffee;
+                        this.coffeeStatus();
+                        document.getElementById('message').innerText = 'U toku je sipanje kafe...!!';
+
+                    } else {
+                        document.getElementById('message').innerText = 'Aparat je ostao bez kafe!!';
+                    }
+                    ;
+                },
+                milkStatus: function () {
+                    //funkcija uzima vrednost atributa milk i ispisuje ga u elementu sa  id="milk-status"
+                    //funkcija se takodje poziva odmah na document load da bi se odmah ispisalo pocetno stanje
+                    document.getElementById('milk-status').innerHTML = this.milk;
+                },
+                addMilk: function () {
+                    //funkcija vrsi punjenje mleka
+                    //funkcija se poziva na dugme ADD MILK
+                    //kada se pozove pojavljuje se prompt gde treba da se unese kolicina mleka
+                    //Unos mora da bude validan(ceo broj) i ne sme biti negativan
+                    //Ako je sve u redu aparat se dopunjuje mlekom tako sto se uzima trenutna vrednost mleka u masini i na nju se dodaje nova kolicina. Ukupna vrednost ne moze biti veca od 100
+                    //poziva se metoda milkStatus() da se osvezi prikaz
+ 
+                    let milkQuantity = prompt('Koju kolicinu mleka biste dodali?');
+                    if (milkQuantity === null) {
+                        return;
+                    }
+                    if (isNaN(milkQuantity) || milkQuantity < 0 || milkQuantity % 1 !== 0) {
+                        alert('Unesite validan broj');
+                        milkQuantity = "";
+                        this.addMilk();
+                    }
+                    if (Number(milkQuantity) + this.milk > 100) {
+                        this.milk = 100;
+                        document.getElementById('milk-status').innerHTML = this.milk;
+                    } else {
+                        this.milk += Number(milkQuantity);
+                        document.getElementById('milk-status').innerHTML = this.milk;
+                    }
+                    this.milkStatus();
+                },
+                emptyMilk: function (data) {
+                    //Funkciom se vrsi praznjenje mleka.
+                    // Funkcija treba da  proveri da li je trenutna vrednost mleka u aparatu veca od prosledjene.
+                    // Ukoliko nije treba da ispise poruku "Machine is out of milk u elementu sa id="message" .
+                    //Ukoliko jeste treba da se atribut milk umanji za prosledjienu vrednost
+                    //-Treba da se pozove metoda milkStatus() da se osvezi prikaz i treba da ispise poruku "Pouring milk" u elementu sa id="message" .
+                    let milkForCoffee = data;
+                    if (this.milk >= milkForCoffee) {
+                        this.milk -= milkForCoffee;
+                        this.milkStatus();
+                        document.getElementById('message').innerText = 'U toku je sipanje mleka...!!';
+                    } else {
+                        document.getElementById('message').innerText = 'Aparat nema dovoljno mleka!!';
+                    };
+                },
+                creditStatus: function () {
+                    //funkcija uzima vrednost atributa credit i ispisuje ga u elementu sa  id="credit"
+                    //funkcija se takodje poziva odmah na document load da bi se odmah ispisalo pocetno stanje
+                    document.getElementById('credit').innerHTML = this.credit;
+                },
+                addCredit: function () {
+                    //funkcija vrsi punjenje kredita
+                    //funkcija se poziva na dugme ADD CREDIT
+                    //kada se pozove pojavljuje se prompt gde treba da se unese kolicina kredita
+                    //Unos mora da bude validan(ceo broj) i ne sme biti negativan
+                    //Ako je sve u redu aparat se dopunjuje kreditom tako sto se uzima trenutna vrednost kredita u masini i na nju se dodaje nova kolicina. Nema max limit
+                    //poziva se metoda creditStatus() da se osvezi prikaz
+                    let creditQuantity = prompt('Koju kolicinu kredita biste dodali?');
+                    if (creditQuantity === null) {
+                        return;
+                    }
+                    if (isNaN(creditQuantity) || creditQuantity < 0 || creditQuantity % 1 !== 0) {
+                        alert('Unesite validan broj');
+                        creditQuantity = "";
+                        this.addCredit();
+                    } else {
+                        this.credit += Number(creditQuantity);
+                        document.getElementById('credit').innerHTML = this.credit;
+                    }
+                    this.creditStatus();
+                },
+                emptyCredit: function (data) {
+                    //  Funkciom se vrsi praznjenje kredita.
+                    //  Ukoliko ima dovoljno kredita za izabranu uslugu treba da se skine odredjena vrednost i da se pozove metoda creditStatus()
+                    // Ukoliko nema vise kredita funkcija treba da ispise poruku "No enough credit " u elementu sa id="message" .
+                    let creditForCoffee = data;
+                    if (this.credit >= creditForCoffee) {
+                        this.credit -= creditForCoffee;
+                        this.creditStatus();
+                    } else {
+                        document.getElementById('message').innerText = 'Nemate dovoljno kredita!';
+                    };
+                },
+                makeShortEspresso: function () {
+                    //poziva se na dugme  Short Espresso
+                    //kosta 30 kredita
+                    //neophodno je izvrsiti proveru da li masina ima dovoljno kredita
+                    //ukoliko nema pozvati emptyCredit i proslediti joj 30 da bi se ispisala poruka da nema kredita i uraditi return
+                    //neophodno je  ispitati da li ima dovoljno vode
+                    //ukoliko nema pozvati emptyWater i proslediti joj 20 da bi se ispisala poruka da nema vode i uraditi return
+                    //neophodno je  ispitati da li ima dovoljno kafe
+                    //ukoliko nema pozvati emptyCaffee i proslediti joj 10 da bi se ispisala poruka da nema kafe i uraditi return
+                    //ukoliko ima dovoljno svih sastojaka u elementu sa id="message" ispisati poruku 'Preparing short esspresso'
+                    //pozvati emptyCredit(30)
+                    //preko metode SetTimeout pozvati emptyWater sa kasnjenjem 1000ms i proslediti joj 20
+                    //setTimeout(this.emptyWater.bind(this),1000, 20);
+                    //preko metode SetTimeout pozvati emptyCaffee sa kasnjenjem 2000ms i proslediti joj 10
+                    //setTimeout(this.emptyCaffe.bind(this),2000, 10);
+                    //preko metode SetTimeout u elementu sa id="message" ispisati poruku 'Short espresso finished'; sa kasnjenjem 3000
+                    let creditShortEspresso = 30;
+                    if (creditShortEspresso > this.credit) {
+                        this.emptyCredit(30);
+                        return;
+                    }
+
+                    let waterShortEspresso = 20;
+                    if (waterShortEspresso > this.water) {
+                        this.emptyWater(20);
+                        return;
+                    }
+
+                    let coffeeShortEspresso = 10;
+                    if (coffeeShortEspresso > this.coffee) {
+                        this.emptyCoffee(10);
+                        return;
+                    }
+
+                    document.getElementById('message').innerText = 'U toku je priprema kratkog espresa...';
+
+                    this.emptyCredit(30);
+                    setTimeout(this.emptyWater.bind(this), 2000, 20);
+                    setTimeout(this.emptyCoffee.bind(this), 3000, 10);
+                    setTimeout(function () {
+                        document.getElementById('message').innerText = 'Kratki espreso je spreman!\nUzivajte';
+                    }, 4000);
+                },
+                makeLongEspresso: function () {
+                    //poziva se na dugme  Long Espresso
+                    //kosta 40 kredita
+                    //neophodno je izvrsiti proveru da li masina ima dovoljno kredita
+                    //ukoliko nema pozvati emptyCredit i proslediti joj 40 da bi se ispisala poruka da nema kredita i uraditi return
+                    //neophodno je  ispitati da li ima dovoljno vode
+                    //ukoliko nema pozvati emptyWater i proslediti joj 40 da bi se ispisala poruka da nema vode i uraditi return
+                    //neophodno je  ispitati da li ima dovoljno kafe
+                    //ukoliko nema pozvati emptyCaffee i proslediti joj 10 da bi se ispisala poruka da nema kafe i uraditi return
+                    //ukoliko ima dovoljno svih sastojaka u elementu sa id="message" ispisati poruku 'Preparing long esspresso'
+                    //pozvati emptyCredit(40)
+                    //preko metode SetTimeout pozvati emptyWater sa kasnjenjem 1000ms i proslediti joj 40
+                    //setTimeout(this.emptyWater.bind(this),1000, 40);
+                    //preko metode SetTimeout pozvati emptyCaffee sa kasnjenjem 2000ms i proslediti joj 10
+                    //setTimeout(this.emptyCaffe.bind(this),2000, 10);
+                    //preko metode SetTimeout u elementu sa id="message" ispisati poruku 'Long espresso finished'; sa kasnjenjem 3000
+                    let creditLongEspresso = 40;
+                    if (creditLongEspresso > this.credit) {
+                        this.emptyCredit(40);
+                        return;
+                    }
+
+                    let waterLongEspresso = 40;
+                    if (waterLongEspresso > this.water) {
+                        this.emptyWater(40);
+                        return;
+                    }
+
+                    let coffeeLongEspresso = 10;
+                    if (coffeeLongEspresso > this.coffee) {
+                        this.emptyCoffee(10);
+                        return;
+                    }
+
+                    document.getElementById('message').innerText = 'U toku je priprema produzenog espresa...';
+
+                    this.emptyCredit(40);
+                    setTimeout(this.emptyWater.bind(this), 2000, 40);
+                    setTimeout(this.emptyCoffee.bind(this), 3000, 10);
+                    setTimeout(function () {
+                        document.getElementById('message').innerText = 'Produzeni espreso je spreman!\nUzivajte';
+                    }, 4000);
+                },
+                makeCappuccino: function () {
+                    
+                    //poziva se na dugme  Capuchino
+                    //kosta 50 kredita
+                    //neophodno je izvrsiti proveru da li masina ima dovoljno kredita
+                    //ukoliko nema pozvati emptyCredit i proslediti joj 50 da bi se ispisala poruka da nema kredita i uraditi return
+                    //neophodno je  ispitati da li ima dovoljno vode
+                    //ukoliko nema pozvati emptyWater i proslediti joj 20 da bi se ispisala poruka da nema vode i uraditi return
+                    //neophodno je  ispitati da li ima dovoljno kafe
+                    //ukoliko nema pozvati emptyCaffee i proslediti joj 10 da bi se ispisala poruka da nema kafe i uraditi return
+                    //neophodno je  ispitati da li ima dovoljno mleka
+                    //ukoliko nema pozvati emptyMilk i proslediti joj 10 da bi se ispisala poruka da nema mleka i uraditi return
+                    //ukoliko ima dovoljno svih sastojaka u elementu sa id="message" ispisati poruku 'Preparing capuchino'
+                    //pozvati emptyCredit(50)
+                    //preko metode SetTimeout pozvati emptyWater sa kasnjenjem 1000ms i proslediti joj 20
+                    //setTimeout(this.emptyWater.bind(this),1000, 20);
+                    //preko metode SetTimeout pozvati emptyCaffee sa kasnjenjem 2000ms i proslediti joj 10
+                    //setTimeout(this.emptyCaffe.bind(this),2000, 10);
+                    //preko metode SetTimeout pozvati emptyMilk sa kasnjenjem 3000ms i proslediti joj 10
+                    //setTimeout(this.emptyCaffe.bind(this),2000, 10);
+                    //preko metode SetTimeout u elementu sa id="message" ispisati poruku 'Capuchino finished'; sa kasnjenjem 4000
+                    let creditCappuccino = 50;
+                    if (creditCappuccino > this.credit) {
+                        this.emptyCredit(50);
+                        return;
+                    }
+
+                    let waterCappucino = 20;
+                    if (waterCappucino > this.water) {
+                        this.emptyWater(20);
+                        return;
+                    }
+
+                    let coffeeCappuccino = 10;
+                    if (coffeeCappuccino > this.coffee) {
+                        this.emptyCoffee(10);
+                        return;
+                    }
+                    
+                    let milkCappuccino = 10;
+                    if (milkCappuccino > this.milk) {
+                        this.emptyMilk(10);
+                        return;
+                    }
+
+                    document.getElementById('message').innerText = 'U toku je priprema kapucina...';
+
+                    this.emptyCredit(50);
+                    setTimeout(this.emptyWater.bind(this), 2000, 20);
+                    setTimeout(this.emptyCoffee.bind(this), 3000, 10);
+                    setTimeout(this.emptyMilk.bind(this), 4000, 10);
+                    setTimeout(function () {
+                        document.getElementById('message').innerText = 'Kapucino je spreman!\nUzivajte';
+                    }, 5000);
+                }
+            };
+        </script>
+    </body>
+</html>
